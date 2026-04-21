@@ -29,6 +29,19 @@
   --an: #EF9F27;
   --ant: #1D9E75;
 }
+:root.light {
+  --bg: #f0f4f2;
+  --surface: #ffffff;
+  --surface2: #e8f0ec;
+  --border: rgba(0,0,0,0.07);
+  --border2: rgba(0,0,0,0.13);
+  --text: #1a1a1a;
+  --text2: #5a6a63;
+  --text3: #a0b0a8;
+}
+
+/* THEME TOGGLE BUTTON */
+.theme-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;}
 body{display:flex;flex-direction:column;}
@@ -143,9 +156,12 @@ select:focus,input:focus{border-color:var(--green);}
     <div class="logo">CASA <span>UNAL</span></div>
     <div class="header-sub">Universidad Nacional de Colombia</div>
   </div>
-  <div class="header-date">
-    <div class="header-fecha" id="h-fecha"></div>
-    <div class="header-turno" id="h-turno"></div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+    <div class="header-date">
+      <div class="header-fecha" id="h-fecha"></div>
+      <div class="header-turno" id="h-turno"></div>
+    </div>
   </div>
 </div>
 
@@ -637,6 +653,23 @@ async function guardarCumple(id,val){
   window._personas=personas;
   renderHoy(personas);
 }
+
+// THEME TOGGLE
+function toggleTheme(){
+  const isLight = document.documentElement.classList.toggle('light');
+  document.getElementById('theme-btn').textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+}
+// Apply saved theme on load
+(function(){
+  if(localStorage.getItem('theme')==='light'){
+    document.documentElement.classList.add('light');
+    document.addEventListener('DOMContentLoaded',()=>{
+      const btn=document.getElementById('theme-btn');
+      if(btn) btn.textContent='☀️';
+    });
+  }
+})();
 
 // INIT
 async function init(){
