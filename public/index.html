@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CASA UNAL">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>CASA UNAL</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #1D9E75;
+  --green-dark: #0F6E56;
+  --green-light: #E1F5EE;
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface2: #1c1c1c;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0f0f0;
+  --text2: #888;
+  --text3: #555;
+  --ta: #378ADD;
+  --el: #7F77DD;
+  --an: #EF9F27;
+  --ant: #1D9E75;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;}
+body{display:flex;flex-direction:column;}
+
+/* HEADER */
+.header{flex-shrink:0;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);}
+.logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);letter-spacing:-.5px;}
+.logo span{color:var(--green);}
+.header-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.header-date{text-align:right;}
+.header-fecha{font-size:11px;color:var(--text2);}
+.header-turno{font-size:12px;color:var(--green);font-weight:500;margin-top:2px;}
+
+/* TABS */
+.tabs{flex-shrink:0;display:flex;overflow-x:auto;padding:0 16px;border-bottom:0.5px solid var(--border);gap:0;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:10px 14px;font-size:13px;color:var(--text2);border:none;background:none;border-bottom:2px solid transparent;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+.tab.active{color:var(--text);border-bottom-color:var(--green);}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:16px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+
+/* PANELS */
+.panel{display:none;animation:fadeIn .2s ease;}
+.panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;}
+.card.accent{border-left:3px solid var(--green);}
+.card.danger{border-left:3px solid #E24B4A;}
+.sec{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid var(--border);}
+.row:last-child{border-bottom:none;}
+
+/* AVATAR */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:500;flex-shrink:0;font-size:11px;}
+
+/* BUTTONS */
+.btn{padding:10px 18px;border-radius:12px;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .1s;width:100%;margin-top:8px;}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green);}
+.btn.primary:active{background:var(--green-dark);}
+.btn:active{opacity:.8;}
+.btn-sm{padding:5px 12px;border-radius:20px;border:0.5px solid var(--border2);background:none;color:var(--text2);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+/* INPUTS */
+select,input[type=text],input[type=date]{width:100%;padding:10px 12px;border:0.5px solid var(--border2);border-radius:12px;background:var(--surface2);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none;}
+select:focus,input:focus{border-color:var(--green);}
+.field{margin-bottom:10px;}
+.field label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cal-nav-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;}
+.cal-dh{font-size:10px;color:var(--text3);text-align:center;padding:3px 0;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-cell{border:0.5px solid var(--border);border-radius:10px;padding:4px 2px;text-align:center;min-height:52px;cursor:pointer;transition:border-color .15s;}
+.cal-cell.otro{opacity:.25;}
+.cal-cell.hoy{border-color:var(--green);}
+.cal-cell.sel{border-color:var(--green);box-shadow:0 0 0 1.5px var(--green);}
+.cal-cell .cn{font-size:11px;color:var(--text2);margin-bottom:2px;}
+.cal-cell .cav{width:22px;height:22px;border-radius:50%;margin:0 auto 2px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:500;}
+.cal-cell .cprio{font-size:8px;color:var(--text3);}
+
+/* METRIC */
+.metric{background:var(--surface2);border-radius:12px;padding:12px;text-align:center;}
+.mn{font-size:22px;font-weight:500;}
+.ml{font-size:11px;color:var(--text2);margin-top:2px;}
+
+/* BADGE */
+.badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:8px;font-weight:500;}
+
+/* SEM TABLE */
+.sem-table{width:100%;border-collapse:collapse;font-size:13px;}
+.sem-table th{font-size:10px;color:var(--text3);padding:4px 6px;text-align:left;border-bottom:0.5px solid var(--border);text-transform:uppercase;letter-spacing:.05em;}
+.sem-table td{padding:8px 6px;border-bottom:0.5px solid var(--border);color:var(--text);}
+.sem-table tr:last-child td{border-bottom:none;}
+.sem-table tr.hoy-row td{background:rgba(29,158,117,.07);}
+
+/* QUOTE */
+.quote{font-family:'DM Serif Display',serif;font-size:14px;color:var(--text2);line-height:1.6;font-style:italic;padding:12px 16px;border-left:2px solid var(--green);margin-bottom:14px;background:var(--surface);}
+
+/* PROGRESS */
+.prog{height:4px;border-radius:2px;background:var(--border2);margin-top:5px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:2px;background:var(--green);}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;z-index:999;transition:transform .3s;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* BIRTHDAY */
+.birthday-banner{background:linear-gradient(135deg,#1D9E75,#378ADD);border-radius:16px;padding:16px;margin-bottom:12px;text-align:center;}
+.birthday-banner .name{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;margin-bottom:4px;}
+.birthday-banner .sub{font-size:12px;color:rgba(255,255,255,.8);}
+
+/* INFO BOX */
+.info-box{background:var(--surface2);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
+
+/* CHECK BTN */
+.chk{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border2);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all .15s;flex-shrink:0;}
+.chk.on{background:var(--green);border-color:var(--green);color:#fff;}
+
+/* FOOTER */
+.footer{flex-shrink:0;text-align:center;padding:8px;font-size:10px;color:var(--text3);border-top:0.5px solid var(--border);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo">CASA <span>UNAL</span></div>
+    <div class="header-sub">Universidad Nacional de Colombia</div>
+  </div>
+  <div class="header-date">
+    <div class="header-fecha" id="h-fecha"></div>
+    <div class="header-turno" id="h-turno"></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('hoy',this)">Hoy</button>
+  <button class="tab" onclick="showTab('calendario',this)">Calendario</button>
+  <button class="tab" onclick="showTab('semana',this)">Semana</button>
+  <button class="tab" onclick="showTab('implementos',this)">Implementos</button>
+  <button class="tab" onclick="showTab('multas',this)">Multas</button>
+  <button class="tab" onclick="showTab('perfil',this)">Personas</button>
+</div>
+
+<div class="content">
+
+<!-- HOY -->
+<div class="panel active" id="panel-hoy">
+  <div id="birthday-zone"></div>
+  <div id="quote-zone"></div>
+  <div class="card accent" id="card-turno"></div>
+  <div class="card" id="card-tareas"></div>
+  <div id="basura-zone"></div>
+  <div class="footer" style="position:static;border:none;margin-top:8px;padding:0;">
+    <div style="color:var(--text3);font-size:11px;font-style:italic;">Somos 4, la casa es de todos.</div>
+  </div>
+</div>
+
+<!-- CALENDARIO -->
+<div class="panel" id="panel-calendario">
+  <div class="cal-nav">
+    <button class="cal-nav-btn" onclick="cambiarMes(-1)">‹</button>
+    <div style="font-size:15px;font-weight:500;" id="cal-titulo"></div>
+    <button class="cal-nav-btn" onclick="cambiarMes(1)">›</button>
+  </div>
+  <div class="cal-head">
+    <div class="cal-dh">L</div><div class="cal-dh">M</div><div class="cal-dh">X</div>
+    <div class="cal-dh">J</div><div class="cal-dh">V</div><div class="cal-dh">S</div>
+    <div class="cal-dh" style="color:#E24B4A;">D</div>
+  </div>
+  <div class="cal-grid" id="cal-grid"></div>
+  <div id="cal-detalle" style="margin-top:12px;"></div>
+</div>
+
+<!-- SEMANA -->
+<div class="panel" id="panel-semana">
+  <div class="cal-nav" style="margin-bottom:10px;">
+    <button class="cal-nav-btn" onclick="cambiarSemana(-1)">‹</button>
+    <div style="font-size:13px;font-weight:500;" id="sem-titulo"></div>
+    <button class="cal-nav-btn" onclick="cambiarSemana(1)">›</button>
+  </div>
+  <div class="card" style="padding:12px;">
+    <table class="sem-table" id="sem-table"></table>
+  </div>
+  <div class="card" id="sem-stats"></div>
+</div>
+
+<!-- IMPLEMENTOS -->
+<div class="panel" id="panel-implementos">
+  <div class="info-box">Los implementos rotan cada 4 meses. Marca como comprado cuando lo traigas — todos lo verán al instante.</div>
+  <div class="card" id="impl-ciclo"></div>
+  <div class="card">
+    <div class="sec">Registrar compra</div>
+    <div class="field"><label>Persona</label>
+      <select id="impl-p"><option>Tatiana</option><option>Elkin</option><option>Andy</option><option>Antonio</option></select></div>
+    <div class="field"><label>Implemento</label>
+      <select id="impl-i"><option>Jabón de platos</option><option>Papel higiénico</option><option>Aceite</option><option>Escoba</option><option>Trapero</option><option>Aromatizante</option><option>Limpión</option></select></div>
+    <button class="btn primary" onclick="registrarImpl()">Registrar compra</button>
+  </div>
+  <div class="card" id="impl-hist"></div>
+</div>
+
+<!-- MULTAS -->
+<div class="panel" id="panel-multas">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+    <div class="metric"><div class="mn" style="color:var(--green);" id="m-total">$0</div><div class="ml">Total recaudado</div></div>
+    <div class="metric"><div class="mn" id="m-count">0</div><div class="ml">Multas</div></div>
+  </div>
+  <div class="card" id="deuda-card"></div>
+  <div class="card">
+    <div class="sec">Registrar multa</div>
+    <div class="field"><label>Persona</label>
+      <select id="multa-p"><option>Tatiana</option><option>Elkin</option><option>Andy</option><option>Antonio</option></select></div>
+    <div class="field"><label>Tipo</label>
+      <select id="multa-t"><option value="1000">Día normal — $1.000</option><option value="2000">Domingo — $2.000</option></select></div>
+    <div class="field"><label>Motivo (opcional)</label>
+      <input type="text" id="multa-m" placeholder="Ej: no barrió la cocina"></div>
+    <button class="btn primary" onclick="registrarMulta()">Registrar multa</button>
+  </div>
+  <div class="card" id="multas-hist"></div>
+</div>
+
+<!-- PERSONAS -->
+<div class="panel" id="panel-perfil">
+  <div class="info-box">Registra los cumpleaños — el día de su cumpleaños aparecerá un mensaje especial para todos.</div>
+  <div id="personas-list"></div>
+</div>
+
+</div>
+
+<div class="footer">CASA UNAL · Aquí se forjan los hábitos que duran toda la vida.</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://vyopjifrigxzqdpnpimm.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_KA-8J-G0xfw3YzhecyQ3bA_E9RAJM1p';
+
+const PERSONAS = ['Tatiana','Elkin','Andy','Antonio'];
+const C = {
+  'Tatiana':{bg:'#0C447C22',tx:'#378ADD',ini:'Ta',hex:'#378ADD'},
+  'Elkin':  {bg:'#3C348922',tx:'#7F77DD',ini:'El',hex:'#7F77DD'},
+  'Andy':   {bg:'#63380622',tx:'#EF9F27',ini:'An',hex:'#EF9F27'},
+  'Antonio':{bg:'#08504122',tx:'#1D9E75',ini:'Ant',hex:'#1D9E75'}
+};
+const CICLO=[
+  ['Tatiana','Elkin','Andy','Antonio','Tatiana','Elkin','Andy'],
+  ['Andy','Antonio','Tatiana','Elkin','Andy','Antonio','Antonio'],
+  ['Elkin','Andy','Antonio','Tatiana','Elkin','Andy','Tatiana'],
+  ['Antonio','Tatiana','Elkin','Andy','Antonio','Tatiana','Elkin']
+];
+const PRIORIDADES=['Baño','Patio','Cocina'];
+const PRIO_DESC={
+  'Baño':'Lavar paredes, taza, lavamanos y piso.',
+  'Patio':'Lavar el patio y la lavandería (piso y paredes).',
+  'Cocina':'Limpiar mesa y compartimentos, organizar trastes, limpiar nevera por dentro y por fuera.'
+};
+const PRIO_ICON={'Baño':'🚿','Patio':'🧺','Cocina':'🍳'};
+const BASURA_DIAS=[1,3,5];
+const BASE=new Date(2026,1,2);
+const DIAS_NOM=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const MESES_NOM=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const IMPL_CICLOS=[
+  {start:new Date(2026,1,1),items:{'Jabón de platos':'Tatiana','Papel higiénico':'Elkin','Aceite':'Andy'}},
+  {start:new Date(2026,4,1),items:{'Jabón de platos':'Elkin','Papel higiénico':'Andy','Aceite':'Antonio'}},
+  {start:new Date(2026,7,1),items:{'Jabón de platos':'Andy','Papel higiénico':'Antonio','Aceite':'Tatiana'}},
+  {start:new Date(2026,10,1),items:{'Jabón de platos':'Antonio','Papel higiénico':'Tatiana','Aceite':'Elkin'}}
+];
+const QUOTES=[
+  'En la UNAL aprendemos a cambiar el mundo. Acá, empezamos por barrer.',
+  'La universidad nos forma como profesionales. Esta casa nos forma como personas.',
+  'Los buenos hábitos no se aprenden en el aula. Se practican en casa, cada día.',
+  'Aquí se forjan los hábitos que duran toda la vida.',
+  'Somos 4, la casa es de todos.',
+  'Cooperar es la habilidad más importante que puedes aprender — en la U y en casa.',
+  'Un espacio limpio es un espacio para pensar, estudiar y crecer.'
+];
+
+const hoy = new Date();
+
+// SUPABASE API
+async function sb(method, table, body, filter='') {
+  const url = `${SUPABASE_URL}/rest/v1/${table}${filter}`;
+  const res = await fetch(url, {
+    method,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': method==='POST' ? 'return=representation' : ''
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!res.ok) return null;
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+// HELPERS
+function isSameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function personaDia(d){
+  const fd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const diff=Math.round((fd-new Date(2026,1,2))/86400000);
+  if(diff<0)return PERSONAS[0];
+  return CICLO[Math.floor(diff/7)%4][fd.getDay()===0?6:fd.getDay()-1];
+}
+function prioridadDom(d){
+  const primer=new Date(2026,1,1);
+  while(primer.getDay()!==0)primer.setDate(primer.getDate()+1);
+  let count=0,c=new Date(primer);
+  while(c<d){count++;c.setDate(c.getDate()+7);}
+  return PRIORIDADES[count%3];
+}
+function implCicloActual(){
+  let curr=IMPL_CICLOS[0];
+  for(const ic of IMPL_CICLOS){if(hoy>=ic.start)curr=ic;}
+  return curr;
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function showTab(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+}
+
+// HEADER
+document.getElementById('h-fecha').textContent = hoy.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'}).replace(/^\w/,c=>c.toUpperCase());
+const pHoy = personaDia(hoy);
+document.getElementById('h-turno').textContent = 'Turno: ' + pHoy;
+
+// HOY
+function renderHoy(personas=[]) {
+  const p = personaDia(hoy);
+  const c = C[p];
+  const esDom = hoy.getDay()===0;
+  const esBasura = BASURA_DIAS.includes(hoy.getDay());
+  const pr = esDom ? prioridadDom(hoy) : null;
+
+  // Birthday check
+  const bdZone = document.getElementById('birthday-zone');
+  const todayMD = `${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
+  const cumple = personas.find(p => p.cumpleanos && p.cumpleanos.slice(5)===todayMD);
+  if(cumple){
+    bdZone.innerHTML=`<div class="birthday-banner">
+      <div style="font-size:28px;margin-bottom:6px;">🎂</div>
+      <div class="name">¡Feliz cumpleaños, ${cumple.nombre}!</div>
+      <div class="sub">De parte de toda la casa. ¡Que sea un gran día!</div>
+    </div>`;
+  } else { bdZone.innerHTML=''; }
+
+  // Quote
+  const qIdx = hoy.getDay();
+  document.getElementById('quote-zone').innerHTML=`<div class="quote">"${QUOTES[qIdx]}"</div>`;
+
+  // Turno
+  document.getElementById('card-turno').innerHTML=`
+    <div class="sec">Turno de aseo hoy</div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="av" style="width:44px;height:44px;font-size:13px;background:${c.bg};color:${c.tx};border:1.5px solid ${c.tx}33;">${c.ini}</div>
+      <div style="flex:1;">
+        <div style="font-size:19px;font-weight:500;">${p}</div>
+        <div style="font-size:12px;color:var(--text2);">${esDom?'Domingo — aseo completo':'Aseo diario Lun–Sáb'}</div>
+      </div>
+      ${esDom?`<div style="text-align:center;"><div style="font-size:20px;">${PRIO_ICON[pr]}</div><div style="font-size:10px;color:var(--text2);">${pr}</div></div>`:''}
+    </div>`;
+
+  // Tareas
+  const tareasBase=['Cambiar bolsas de basura (si pasa el carro)','Barrer y trapear el baño','Barrer y trapear la cocina','Organizar las ollas','Limpiar el mesón','Lavar el porta platos verde'];
+  const tareasDom=['Barrer y trapear todo el piso','Barrer gradas y balcón','Barrer y trapear patio de ropas','Limpiar cocina completa','Limpiar baño completo','Atender prioridad: '+pr+' — '+PRIO_DESC[pr]];
+  const lista = esDom ? tareasDom : tareasBase;
+  const savedKey = 'tareas_'+hoy.toDateString();
+  const saved = JSON.parse(localStorage.getItem(savedKey)||'{}');
+
+  document.getElementById('card-tareas').innerHTML=`
+    <div class="sec">Tareas de hoy</div>
+    ${lista.map((t,i)=>`
+      <div class="row">
+        <span style="font-size:13px;line-height:1.4;flex:1;padding-right:10px;${saved[i]?'color:var(--text3);text-decoration:line-through;':''}">${t}</span>
+        <button class="chk${saved[i]?' on':''}" id="chk${i}" onclick="toggleTarea(${i},'${savedKey}')">${saved[i]?'✓':''}</button>
+      </div>`).join('')}`;
+
+  if(esBasura){
+    document.getElementById('basura-zone').innerHTML=`<div class="info-box">🗑️ Hoy pasa el carro de basura. Recuerda sacar las bolsas en la noche.</div>`;
+  } else { document.getElementById('basura-zone').innerHTML=''; }
+}
+
+function toggleTarea(i, key){
+  const saved = JSON.parse(localStorage.getItem(key)||'{}');
+  saved[i] = !saved[i];
+  localStorage.setItem(key, JSON.stringify(saved));
+  renderHoy(window._personas||[]);
+}
+
+// CALENDARIO
+let calAno=hoy.getFullYear(), calMes=hoy.getMonth(), selDate=null;
+
+function cambiarMes(d){calMes+=d;if(calMes>11){calMes=0;calAno++;}if(calMes<0){calMes=11;calAno--;}renderCal();}
+
+function renderCal(){
+  document.getElementById('cal-titulo').textContent=MESES_NOM[calMes]+' '+calAno;
+  const primer=new Date(calAno,calMes,1);
+  const ultimo=new Date(calAno,calMes+1,0);
+  let ini=new Date(primer);
+  const dow=ini.getDay();
+  ini.setDate(ini.getDate()-(dow===0?6:dow-1));
+  let html='',curr=new Date(ini),count=0;
+  while(curr<=ultimo||count<35){
+    if(count>=42)break;
+    const d=new Date(curr);
+    const esMes=d.getMonth()===calMes;
+    const esHoy=isSameDay(d,hoy);
+    const esDom=d.getDay()===0;
+    const p=personaDia(d);
+    const c=C[p];
+    const pr=esDom?prioridadDom(d):null;
+    const esSel=selDate&&isSameDay(d,selDate);
+    html+=`<div class="cal-cell${!esMes?' otro':''}${esHoy?' hoy':''}${esSel?' sel':''}" onclick="selDia(${d.getFullYear()},${d.getMonth()},${d.getDate()})">
+      <div class="cn">${d.getDate()}</div>
+      <div class="cav" style="background:${c.bg};color:${c.tx};">${c.ini}</div>
+      ${esDom&&esMes?`<div class="cprio">${PRIO_ICON[pr]}</div>`:''}
+    </div>`;
+    curr.setDate(curr.getDate()+1);count++;
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+  renderCalDetalle();
+}
+
+function selDia(y,m,d){selDate=new Date(y,m,d);renderCal();}
+
+function renderCalDetalle(){
+  const el=document.getElementById('cal-detalle');
+  if(!selDate){el.innerHTML='';return;}
+  const p=personaDia(selDate);const c=C[p];
+  const esDom=selDate.getDay()===0;
+  const pr=esDom?prioridadDom(selDate):null;
+  el.innerHTML=`<div class="card accent">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="av" style="width:36px;height:36px;background:${c.bg};color:${c.tx};border:1px solid ${c.tx}33;">${c.ini}</div>
+      <div>
+        <div style="font-size:14px;font-weight:500;">${selDate.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'})}</div>
+        <div style="font-size:12px;color:var(--text2);">Le toca a <strong style="color:${c.tx}">${p}</strong> · ${esDom?'Aseo completo':'Aseo diario'}</div>
+      </div>
+      ${isSameDay(selDate,hoy)?`<span class="badge" style="margin-left:auto;background:var(--green);color:#fff;">Hoy</span>`:''}
+    </div>
+    ${esDom?`<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);font-size:12px;color:var(--text2);">${PRIO_ICON[pr]} Prioridad: <strong style="color:var(--text)">${pr}</strong> — ${PRIO_DESC[pr]}</div>`:''}
+  </div>`;
+}
+
+// SEMANA
+let semBase=new Date(hoy);
+(function(){const d=semBase.getDay();semBase.setDate(semBase.getDate()-(d===0?6:d-1));})();
+
+function cambiarSemana(d){semBase=new Date(semBase);semBase.setDate(semBase.getDate()+d*7);renderSemana();}
+
+function renderSemana(){
+  const fin=new Date(semBase);fin.setDate(fin.getDate()+6);
+  document.getElementById('sem-titulo').textContent=
+    semBase.toLocaleDateString('es-CO',{day:'numeric',month:'short'})+' – '+fin.toLocaleDateString('es-CO',{day:'numeric',month:'short'});
+  let rows='<tr><th>Día</th><th>Fecha</th><th>Persona</th><th></th></tr>';
+  const conteo={};PERSONAS.forEach(p=>conteo[p]=0);
+  for(let i=0;i<7;i++){
+    const d=new Date(semBase);d.setDate(d.getDate()+i);
+    const p=personaDia(d);conteo[p]++;
+    const c=C[p];
+    const esDom=d.getDay()===0;
+    const pr=esDom?prioridadDom(d):null;
+    const esHoy=isSameDay(d,hoy);
+    const esBasura=BASURA_DIAS.includes(d.getDay());
+    rows+=`<tr${esHoy?' class="hoy-row"':''}>
+      <td style="color:${esDom?'#E24B4A':'var(--text)'};font-weight:${esHoy?500:400};">${DIAS_NOM[i]}</td>
+      <td style="color:var(--text2);font-size:12px;">${d.getDate()}/${d.getMonth()+1}</td>
+      <td><div style="display:flex;align-items:center;gap:5px;">
+        <div class="av" style="width:20px;height:20px;font-size:8px;background:${c.bg};color:${c.tx};">${c.ini}</div>
+        <span>${p}</span></div></td>
+      <td style="font-size:11px;color:var(--text3);">${esDom?PRIO_ICON[pr]+' '+pr:''}${esBasura&&!esDom?'🗑️':''}</td>
+    </tr>`;
+  }
+  document.getElementById('sem-table').innerHTML=rows;
+  let stats='<div class="sec">Distribución esta semana</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">';
+  PERSONAS.forEach(p=>{
+    const c=C[p];
+    stats+=`<div style="text-align:center;padding:8px;border-radius:10px;background:${c.bg};">
+      <div style="font-size:18px;font-weight:500;color:${c.tx};">${conteo[p]}</div>
+      <div style="font-size:10px;color:${c.tx};margin-top:2px;">${c.ini}</div>
+    </div>`;
+  });
+  document.getElementById('sem-stats').innerHTML=stats+'</div>';
+}
+
+// IMPLEMENTOS
+async function renderImpl(){
+  const ciclo=implCicloActual();
+  const hist = await sb('GET','implementos','',`?order=created_at.desc&limit=10`)||[];
+  const compLocal=JSON.parse(localStorage.getItem('impl_comp')||'{}');
+  const items=['Jabón de platos','Papel higiénico','Aceite'];
+  let html='<div class="sec">Ciclo actual — quién pone qué</div>';
+  items.forEach(item=>{
+    const resp=ciclo.items[item]||'—';
+    const c=resp!=='—'?C[resp]:{bg:'#ffffff11',tx:'#888',ini:'?'};
+    const key=item+'_'+ciclo.start.getTime();
+    const listo=compLocal[key];
+    html+=`<div class="row">
+      <div><div style="font-size:13px;font-weight:500;">${item}</div>
+        <div style="font-size:11px;color:var(--text2);">Responsable: <span style="color:${c.tx};font-weight:500;">${resp}</span></div></div>
+      <button onclick="toggleImpl('${key}',this)" style="font-size:11px;padding:4px 10px;border-radius:8px;border:0.5px solid ${listo?'#1D9E75':'var(--border2)'};background:${listo?'rgba(29,158,117,.15)':'none'};color:${listo?'#1D9E75':'var(--text2)'};cursor:pointer;">${listo?'✓ Listo':'Pendiente'}</button>
+    </div>`;
+  });
+  document.getElementById('impl-ciclo').innerHTML=html;
+
+  let histHtml='<div class="sec">Historial de compras</div>';
+  if(!hist||hist.length===0){histHtml+='<div style="font-size:13px;color:var(--text2);">Sin registros aún.</div>';}
+  else{histHtml+=hist.map(r=>{
+    const c=C[r.persona]||{bg:'#fff1',tx:'#888',ini:'?'};
+    return `<div class="row"><div style="display:flex;align-items:center;gap:8px;">
+      <div class="av" style="width:28px;height:28px;background:${c.bg};color:${c.tx};border:1px solid ${c.tx}33;">${c.ini}</div>
+      <div><div style="font-size:13px;font-weight:500;">${r.persona}</div>
+        <div style="font-size:11px;color:var(--text2);">${r.item} · ${r.fecha}</div></div>
+    </div></div>`;}).join('');}
+  document.getElementById('impl-hist').innerHTML=histHtml;
+}
+
+function toggleImpl(key,btn){
+  const comp=JSON.parse(localStorage.getItem('impl_comp')||'{}');
+  comp[key]=!comp[key];
+  localStorage.setItem('impl_comp',JSON.stringify(comp));
+  renderImpl();
+}
+
+async function registrarImpl(){
+  const p=document.getElementById('impl-p').value;
+  const it=document.getElementById('impl-i').value;
+  const fecha=hoy.toLocaleDateString('es-CO',{day:'numeric',month:'short'});
+  await sb('POST','implementos',{persona:p,item:it,fecha});
+  toast('✓ Compra registrada');
+  renderImpl();
+}
+
+// MULTAS
+async function renderMultas(){
+  const multas=await sb('GET','multas','',`?order=created_at.desc`)||[];
+  const total=multas.reduce((s,m)=>s+m.valor,0);
+  document.getElementById('m-total').textContent='$'+total.toLocaleString('es-CO');
+  document.getElementById('m-count').textContent=multas.length;
+
+  const deudas={};PERSONAS.forEach(p=>deudas[p]=0);
+  multas.forEach(m=>deudas[m.persona]=(deudas[m.persona]||0)+m.valor);
+  const maxD=Math.max(...Object.values(deudas),1);
+
+  let dHtml='<div class="sec">Deuda por persona</div>';
+  PERSONAS.forEach(p=>{
+    const c=C[p];
+    dHtml+=`<div class="row">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;">
+        <div class="av" style="width:30px;height:30px;background:${c.bg};color:${c.tx};border:1px solid ${c.tx}33;">${c.ini}</div>
+        <div style="flex:1;"><div style="font-size:13px;">${p}</div>
+          <div class="prog"><div class="prog-fill" style="width:${Math.round((deudas[p]||0)/maxD*100)}%;"></div></div></div>
+      </div>
+      <span style="font-size:13px;font-weight:500;color:${(deudas[p]||0)>0?'#E24B4A':'var(--text3)'};margin-left:10px;">${(deudas[p]||0)>0?'$'+(deudas[p]).toLocaleString('es-CO'):'$0'}</span>
+    </div>`;
+  });
+  document.getElementById('deuda-card').innerHTML=dHtml;
+
+  let hHtml='<div class="sec">Historial</div>';
+  if(!multas||multas.length===0){hHtml+='<div style="font-size:13px;color:var(--text2);">Sin multas registradas.</div>';}
+  else{hHtml+=multas.slice(0,15).map(m=>{
+    const c=C[m.persona]||{bg:'#fff1',tx:'#888',ini:'?'};
+    return `<div class="row">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="av" style="width:28px;height:28px;background:${c.bg};color:${c.tx};border:1px solid ${c.tx}33;">${c.ini}</div>
+        <div><div style="font-size:13px;font-weight:500;">${m.persona}</div>
+          <div style="font-size:11px;color:var(--text2);">${m.tipo||''}${m.motivo?' · '+m.motivo:''} · ${m.fecha||''}</div></div>
+      </div>
+      <span style="font-size:13px;font-weight:500;color:#E24B4A;">$${(m.valor||0).toLocaleString('es-CO')}</span>
+    </div>`;}).join('');}
+  document.getElementById('multas-hist').innerHTML=hHtml;
+}
+
+async function registrarMulta(){
+  const p=document.getElementById('multa-p').value;
+  const v=parseInt(document.getElementById('multa-t').value);
+  const m=document.getElementById('multa-m').value.trim();
+  const tipo=v===2000?'Domingo':'Día normal';
+  const fecha=hoy.toLocaleDateString('es-CO',{day:'numeric',month:'short'});
+  await sb('POST','multas',{persona:p,valor:v,tipo,motivo:m,fecha});
+  document.getElementById('multa-m').value='';
+  toast('Multa registrada');
+  renderMultas();
+}
+
+// PERSONAS / CUMPLEAÑOS
+async function renderPersonas(){
+  const personas=await sb('GET','personas','',`?order=nombre`)||[];
+  window._personas=personas;
+  let html='';
+  personas.forEach(per=>{
+    const c=C[per.nombre]||{bg:'#fff1',tx:'#888',ini:'?'};
+    html+=`<div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div class="av" style="width:44px;height:44px;font-size:14px;background:${c.bg};color:${c.tx};border:1.5px solid ${c.tx}33;">${c.ini}</div>
+        <div style="font-size:17px;font-weight:500;">${per.nombre}</div>
+      </div>
+      <div class="field">
+        <label>Fecha de cumpleaños</label>
+        <input type="date" id="bd-${per.id}" value="${per.cumpleanos||''}" onchange="guardarCumple('${per.id}',this.value)">
+      </div>
+      ${per.cumpleanos?`<div style="font-size:12px;color:var(--text2);margin-top:4px;">🎂 ${new Date(per.cumpleanos+'T12:00:00').toLocaleDateString('es-CO',{day:'numeric',month:'long'})}</div>`:''}
+    </div>`;
+  });
+  document.getElementById('personas-list').innerHTML=html||'<div style="color:var(--text2);font-size:13px;">Cargando...</div>';
+}
+
+async function guardarCumple(id,val){
+  await sb('PATCH','personas',{cumpleanos:val},`?id=eq.${id}`);
+  toast('🎂 Cumpleaños guardado');
+  const personas=await sb('GET','personas','',`?order=nombre`)||[];
+  window._personas=personas;
+  renderHoy(personas);
+}
+
+// INIT
+async function init(){
+  const personas=await sb('GET','personas','',`?order=nombre`)||[];
+  window._personas=personas;
+  renderHoy(personas);
+  renderCal();
+  renderSemana();
+}
+
+init();
+
+// Tab lazy loading
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    const id=t.getAttribute('onclick').match(/'(\w+)'/)[1];
+    if(id==='implementos')renderImpl();
+    if(id==='multas')renderMultas();
+    if(id==='perfil')renderPersonas();
+  });
+});
+
+// PWA
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
