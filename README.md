@@ -1,4 +1,4 @@
-# CASA UNAL 🏠
+# RoomMate 🏠
 
 App de gestión de aseo y convivencia para estudiantes de la Universidad Nacional de Colombia.
 
