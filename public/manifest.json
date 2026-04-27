@@ -1,11 +1,11 @@
 {
-  "name": "CASA UNAL",
-  "short_name": "CASA UNAL",
-  "description": "Gestión de aseo y convivencia para estudiantes de la UNAL",
+  "name": "RoomMate",
+  "short_name": "RoomMate",
+  "description": "Tu casa, tu comunidad. Convivencia inteligente para compañeros de cuarto.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#1D9E75",
+  "background_color": "#0f0d0c",
+  "theme_color": "#E8622A",
   "orientation": "portrait",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
