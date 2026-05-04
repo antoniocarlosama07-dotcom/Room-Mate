@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#E8622A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RoomMate">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>RoomMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent: #E8622A;
+  --accent-dark: #C44E1E;
+  --accent-soft: rgba(232,98,42,0.12);
+  --accent2: #F4A261;
+  --bg: #0f0d0c;
+  --surface: #1a1714;
+  --surface2: #231f1b;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text: #f2ede8;
+  --text2: #9a8f87;
+  --text3: #5c534d;
+  --red: #E24B4A;
+}
+:root.light {
+  --bg: #fdf6f0;
+  --surface: #ffffff;
+  --surface2: #fdeee3;
+  --border: rgba(0,0,0,0.07);
+  --border2: rgba(0,0,0,0.12);
+  --text: #1e1610;
+  --text2: #7a6558;
+  --text3: #c0a898;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;}
+body{display:flex;flex-direction:column;}
+.header{flex-shrink:0;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);}
+.logo{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);letter-spacing:-.3px;font-weight:600;}
+.logo span{color:var(--accent);}
+.header-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.header-fecha{font-size:11px;color:var(--text2);}
+.header-turno{font-size:12px;color:var(--accent);font-weight:600;margin-top:2px;text-align:right;}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.tabs{flex-shrink:0;display:flex;overflow-x:auto;padding:0 16px;border-bottom:0.5px solid var(--border);scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:10px 14px;font-size:13px;color:var(--text2);border:none;background:none;border-bottom:2px solid transparent;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;white-space:nowrap;font-weight:500;}
+.tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.content{flex:1;overflow-y:auto;padding:16px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.panel{display:none;animation:fadeIn .2s ease;}
+.panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;}
+.card.accent{border-left:3px solid var(--accent);}
+.sec{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px;}
+.row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid var(--border);}
+.row:last-child{border-bottom:none;}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;font-size:11px;}
+.btn{padding:10px 18px;border-radius:12px;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-size:13px;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .1s;width:100%;margin-top:8px;font-weight:500;}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.btn.primary:active{background:var(--accent-dark);}
+.btn.danger{background:rgba(226,75,74,.12);color:var(--red);border-color:rgba(226,75,74,.3);}
+.btn:active{opacity:.8;}
+select,input[type=text],input[type=date]{width:100%;padding:10px 12px;border:0.5px solid var(--border2);border-radius:12px;background:var(--surface2);color:var(--text);font-size:13px;font-family:'Nunito',sans-serif;outline:none;-webkit-appearance:none;}
+select:focus,input:focus{border-color:var(--accent);}
+textarea{width:100%;padding:10px 12px;border:0.5px solid var(--border2);border-radius:12px;background:var(--surface2);color:var(--text);font-size:13px;font-family:'Nunito',sans-serif;outline:none;resize:none;min-height:80px;}
+textarea:focus{border-color:var(--accent);}
+.field{margin-bottom:10px;}
+.field label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cal-nav-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;}
+.cal-dh{font-size:10px;color:var(--text3);text-align:center;padding:3px 0;font-weight:600;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-cell{border:0.5px solid var(--border);border-radius:10px;padding:4px 2px;text-align:center;min-height:62px;cursor:pointer;transition:border-color .15s;position:relative;}
+.cal-cell.otro{opacity:.25;}
+.cal-cell.hoy{border-color:var(--accent);}
+.cal-cell.sel{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent);}
+.cal-cell.cumple{border-color:#EF9F27;}
+.cal-cell.completado{background:rgba(232,98,42,.07);}
+.cal-cell.incumplido{background:rgba(226,75,74,.07);}
+.cal-cell .cn{font-size:11px;color:var(--text2);margin-bottom:2px;font-weight:600;}
+.cal-cell .cav{width:22px;height:22px;border-radius:50%;margin:0 auto 2px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;}
+.cal-cell .cprio{font-size:8px;color:var(--text3);}
+.cal-cell .cbd{font-size:8px;color:#EF9F27;font-weight:600;line-height:1.2;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px;}
+.cal-cell .caseo{font-size:10px;margin-top:1px;line-height:1;}
+.metric{background:var(--surface2);border-radius:12px;padding:12px;text-align:center;}
+.mn{font-size:22px;font-weight:600;}
+.ml{font-size:11px;color:var(--text2);margin-top:2px;}
+.badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:8px;font-weight:600;}
+.sem-table{width:100%;border-collapse:collapse;font-size:13px;}
+.sem-table th{font-size:10px;color:var(--text3);padding:4px 6px;text-align:left;border-bottom:0.5px solid var(--border);text-transform:uppercase;letter-spacing:.05em;font-weight:600;}
+.sem-table td{padding:8px 6px;border-bottom:0.5px solid var(--border);color:var(--text);}
+.sem-table tr:last-child td{border-bottom:none;}
+.sem-table tr.hoy-row td{background:rgba(232,98,42,.07);}
+.quote{font-family:'Playfair Display',serif;font-size:14px;color:var(--text2);line-height:1.6;font-style:italic;padding:12px 16px;border-left:2px solid var(--accent);margin-bottom:14px;background:var(--surface);border-radius:0 10px 10px 0;}
+.prog{height:4px;border-radius:2px;background:var(--border2);margin-top:5px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:2px;background:var(--accent);}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;z-index:999;transition:transform .3s;pointer-events:none;font-weight:500;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.birthday-banner{background:linear-gradient(135deg,#E8622A,#F4A261);border-radius:16px;padding:16px;margin-bottom:12px;text-align:center;}
+.birthday-banner .bname{font-family:'Playfair Display',serif;font-size:20px;color:#fff;margin-bottom:4px;font-weight:600;}
+.birthday-banner .bsub{font-size:12px;color:rgba(255,255,255,.85);}
+.info-box{background:var(--surface2);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
+.chk{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border2);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all .15s;flex-shrink:0;}
+.chk.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.buz-msg{background:var(--surface2);border-radius:12px;padding:12px;margin-bottom:8px;position:relative;}
+.buz-autor{font-size:11px;font-weight:600;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+.buz-texto{font-size:13px;color:var(--text);line-height:1.5;}
+.buz-fecha{font-size:10px;color:var(--text3);margin-top:5px;}
+.buz-del{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;border:0.5px solid var(--border2);background:none;color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1;}
+
+/* Selector de persona */
+.persona-selector{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+.ps-btn{padding:10px 12px;border-radius:12px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:13px;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;display:flex;align-items:center;gap:8px;font-weight:500;}
+.ps-btn.activo{border-color:var(--accent);background:var(--accent-soft);color:var(--text);}
+.ps-btn .ps-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;}
+
+/* Banner de completado */
+.completado-banner{background:linear-gradient(135deg,#C44E1E,#E8622A);border-radius:16px;padding:20px;margin-bottom:12px;text-align:center;animation:fadeIn .3s ease;}
+.completado-banner .cb-icon{font-size:36px;margin-bottom:8px;}
+.completado-banner .cb-msg{font-family:'Playfair Display',serif;font-size:18px;color:#fff;margin-bottom:4px;font-weight:600;}
+.completado-banner .cb-sub{font-size:12px;color:rgba(255,255,255,.85);}
+
+/* Implementos */
+.impl-item{background:var(--surface2);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.impl-item.listo{opacity:.6;}
+.impl-resp{font-size:11px;color:var(--text2);margin-top:2px;}
+
+.footer{flex-shrink:0;text-align:center;padding:8px;font-size:10px;color:var(--text3);border-top:0.5px solid var(--border);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo">Room<span>Mate</span></div>
+    <div class="header-sub">Tu casa, tu comunidad</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+    <div style="text-align:right;">
+      <div class="header-fecha" id="h-fecha"></div>
+      <div class="header-turno" id="h-turno"></div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('hoy',this)">Hoy</button>
+  <button class="tab" onclick="showTab('calendario',this)">Calendario</button>
+  <button class="tab" onclick="showTab('semana',this)">Semana</button>
+  <button class="tab" onclick="showTab('implementos',this)">Implementos</button>
+  <button class="tab" onclick="showTab('multas',this)">Multas</button>
+  <button class="tab" onclick="showTab('buzon',this)">Buzón</button>
+  <button class="tab" onclick="showTab('perfil',this)">Personas</button>
+</div>
+
+<div class="content">
+
+<!-- HOY -->
+<div class="panel active" id="panel-hoy">
+  <div id="birthday-zone"></div>
+  <div id="quote-zone"></div>
+  <div id="persona-sel-zone"></div>
+  <div id="completado-zone"></div>
+  <div class="card accent" id="card-turno"></div>
+  <div class="card" id="card-tareas"></div>
+  <div id="basura-zone"></div>
+  <div style="color:var(--text3);font-size:11px;font-style:italic;text-align:center;margin-top:4px;">Un buen día comienza con un espacio limpio.</div>
+</div>
+
+<!-- CALENDARIO -->
+<div class="panel" id="panel-calendario">
+  <div class="cal-nav">
+    <button class="cal-nav-btn" onclick="cambiarMes(-1)">‹</button>
+    <div style="font-size:15px;font-weight:500;" id="cal-titulo"></div>
+    <button class="cal-nav-btn" onclick="cambiarMes(1)">›</button>
+  </div>
+  <div style="display:flex;gap:12px;margin-bottom:10px;font-size:11px;color:var(--text2);">
+    <span style="color:#EF9F27;">🎂 Cumpleaños</span>
+  </div>
+  <div class="cal-head">
+    <div class="cal-dh">L</div><div class="cal-dh">M</div><div class="cal-dh">X</div>
+    <div class="cal-dh">J</div><div class="cal-dh">V</div><div class="cal-dh">S</div>
+    <div class="cal-dh" style="color:#E24B4A;">D</div>
+  </div>
+  <div class="cal-grid" id="cal-grid"></div>
+  <div id="cal-detalle" style="margin-top:12px;"></div>
+</div>
+
+<!-- SEMANA -->
+<div class="panel" id="panel-semana">
+  <div class="cal-nav" style="margin-bottom:10px;">
+    <button class="cal-nav-btn" onclick="cambiarSemana(-1)">‹</button>
+    <div style="font-size:13px;font-weight:500;" id="sem-titulo"></div>
+    <button class="cal-nav-btn" onclick="cambiarSemana(1)">›</button>
+  </div>
+  <div class="card" style="padding:12px;"><table class="sem-table" id="sem-table"></table></div>
+  <div class="card" id="sem-stats"></div>
+</div>
+
+<!-- IMPLEMENTOS -->
+<div class="panel" id="panel-implementos">
+  <div class="info-box">Al registrar una compra, el ítem se marca como cubierto y la rotación avanza automáticamente al siguiente responsable.</div>
+  <div id="impl-ciclo"></div>
+  <div class="card" id="impl-hist"></div>
+</div>
+
+<!-- MULTAS -->
+<div class="panel" id="panel-multas">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+    <div class="metric"><div class="mn" style="color:var(--green);" id="m-total">$0</div><div class="ml">Total recaudado</div></div>
+    <div class="metric"><div class="mn" id="m-count">0</div><div class="ml">Multas</div></div>
+  </div>
+  <div class="card" id="deuda-card"></div>
+  <div class="card">
+    <div class="sec">Registrar multa</div>
+    <div class="field"><label>Persona</label>
+      <select id="multa-p"><option>Tatiana</option><option>Elkin</option><option>Andy</option><option>Antonio</option></select></div>
+    <div class="field"><label>Tipo</label>
+      <select id="multa-t"><option value="1000">Día normal — $1.000</option><option value="2000">Domingo — $2.000</option></select></div>
+    <div class="field"><label>Motivo (opcional)</label>
+      <input type="text" id="multa-m" placeholder="Ej: no barrió la cocina"></div>
+    <button class="btn primary" onclick="registrarMulta()">Registrar multa</button>
+  </div>
+  <div class="card" id="multas-hist"></div>
+</div>
+
+<!-- BUZÓN -->
+<div class="panel" id="panel-buzon">
+  <div class="info-box">Deja aquí sugerencias, avisos o comentarios para todos. Son visibles para los 4.</div>
+  <div class="card">
+    <div class="sec">Nuevo mensaje</div>
+    <div class="field"><label>¿Quién escribe?</label>
+      <select id="buz-p"><option>Tatiana</option><option>Elkin</option><option>Andy</option><option>Antonio</option></select></div>
+    <div class="field"><label>Mensaje</label>
+      <textarea id="buz-texto" placeholder="Ej: El trapero está dañado, hay que reemplazarlo..."></textarea></div>
+    <button class="btn primary" onclick="enviarBuzon()">Publicar mensaje</button>
+  </div>
+  <div id="buzon-lista"></div>
+</div>
+
+<!-- PERSONAS -->
+<div class="panel" id="panel-perfil">
+  <div class="info-box">Registra tu fecha de cumpleaños para recibir un mensaje especial en tu día. 🎂</div>
+  <div id="personas-list"></div>
+</div>
+
+</div>
+
+<div class="footer">RoomMate · Vivir juntos es un arte que se aprende cada día.</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL='https://vyopjifrigxzqdpnpimm.supabase.co';
+const SUPABASE_KEY='sb_publishable_KA-8J-G0xfw3YzhecyQ3bA_E9RAJM1p';
+const PERSONAS=['Tatiana','Elkin','Andy','Antonio'];
+const C={
+  'Tatiana':{bg:'#0C447C22',tx:'#378ADD',ini:'Ta'},
+  'Elkin':  {bg:'#3C348922',tx:'#7F77DD',ini:'El'},
+  'Andy':   {bg:'#63380622',tx:'#EF9F27',ini:'An'},
+  'Antonio':{bg:'#08504122',tx:'#1D9E75',ini:'Ant'}
+};
+// Ciclo de aseo: fila = semana (0-3), columna = día (Lun=0 … Dom=6)
+const CICLO=[
+  ['Tatiana','Elkin','Andy','Antonio','Tatiana','Elkin','Andy'],
+  ['Andy','Antonio','Tatiana','Elkin','Andy','Antonio','Antonio'],
+  ['Elkin','Andy','Antonio','Tatiana','Elkin','Andy','Tatiana'],
+  ['Antonio','Tatiana','Elkin','Andy','Antonio','Tatiana','Elkin']
+];
+const PRIORIDADES=['Baño','Patio','Cocina'];
+const PRIO_DESC={
+  'Baño':'Lavar paredes, taza, lavamanos y piso.',
+  'Patio':'Lavar el patio y la lavandería (piso y paredes).',
+  'Cocina':'Limpiar mesa y compartimentos, organizar trastes, limpiar nevera por dentro y por fuera.'
+};
+const PRIO_ICON={'Baño':'🚿','Patio':'🧺','Cocina':'🍳'};
+const BASURA_DIAS=[1,3,5];
+const DIAS_NOM=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const MESES_NOM=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+// Rotación de implementos: orden fijo, avanza al registrar compra
+const IMPL_ITEMS=['Aceite','Jabón de platos','Papel higiénico'];
+const IMPL_ORDEN=['Tatiana','Elkin','Andy','Antonio'];
+
+const QUOTES=[
+  'El respeto por el espacio compartido empieza con los pequeños detalles.',
+  'Un hogar ordenado es una mente despejada.',
+  'Los buenos hábitos no se aprenden solos — se construyen entre todos.',
+  'Si lo usas, déjalo mejor de como lo encontraste.',
+  'Entre todos hacemos de este espacio un lugar donde da gusto vivir.',
+  'Cooperar es la habilidad más valiosa que puedes cultivar.',
+  'Un espacio limpio es un espacio para crecer, descansar y ser tú mismo.'
+];
+
+const MSGS_COMPLETADO=[
+  '¡Bien hecho, @nombre! 🙌',
+  '¡Gracias por tu compromiso, @nombre!',
+  '¡Gracias por mantener la casa limpia, @nombre! ✨',
+  '¡La casa te lo agradece, @nombre! 🏠',
+  '¡Eres un crack, @nombre! Así se hace. 💪',
+  '¡@nombre, eres un ejemplo para todos! 🌟',
+  '¡Qué equipo tan increíble tenemos. Gracias, @nombre!'
+];
+
+const hoy=new Date();
+let personaActiva=localStorage.getItem('persona_activa')||null;
+
+// ── SUPABASE ────────────────────────────────────────────────────────────────
+async function sb(method,table,body,filter=''){
+  const url=`${SUPABASE_URL}/rest/v1/${table}${filter}`;
+  const res=await fetch(url,{
+    method,
+    headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':method==='POST'?'return=representation':''},
+    body:body?JSON.stringify(body):undefined
+  });
+  if(!res.ok)return null;
+  const text=await res.text();
+  return text?JSON.parse(text):null;
+}
+
+// ── HELPERS ─────────────────────────────────────────────────────────────────
+function isSameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function fechaKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+function personaDia(d){
+  const fd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const diff=Math.round((fd-new Date(2026,1,2))/86400000);
+  if(diff<0)return PERSONAS[0];
+  // día de la semana: 0=Dom … convertimos a 0=Lun…6=Dom
+  const dow=fd.getDay()===0?6:fd.getDay()-1;
+  return CICLO[Math.floor(diff/7)%4][dow];
+}
+
+// Prioridad de domingo: fuente de verdad ÚNICA (usada en calendario Y semana)
+function prioridadDom(d){
+  const primer=new Date(2026,1,1);
+  while(primer.getDay()!==0)primer.setDate(primer.getDate()+1);
+  let count=0,c=new Date(primer);
+  while(!isSameDay(c,d)){
+    if(c>d)break;
+    count++;c.setDate(c.getDate()+7);
+  }
+  return PRIORIDADES[count%3];
+}
+
+function toast(msg,color){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.background=color||'var(--green)';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function showTab(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+}
+
+function cumpleDelDia(d,personas){
+  const md=`${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return personas.find(p=>p.cumpleanos&&p.cumpleanos.slice(5)===md)||null;
+}
+
+// ── HEADER ──────────────────────────────────────────────────────────────────
+document.getElementById('h-fecha').textContent=hoy.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'}).replace(/^\w/,c=>c.toUpperCase());
+document.getElementById('h-turno').textContent='Turno: '+personaDia(hoy);
+
+// ── TEMA ────────────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const isLight=document.documentElement.classList.toggle('light');
+  document.getElementById('theme-btn').textContent=isLight?'☀️':'🌙';
+  localStorage.setItem('theme',isLight?'light':'dark');
+}
+(function(){
+  if(localStorage.getItem('theme')==='light'){
+    document.documentElement.classList.add('light');
+    document.addEventListener('DOMContentLoaded',()=>{
+      const btn=document.getElementById('theme-btn');if(btn)btn.textContent='☀️';
+    });
+  }
+})();
+
+// ── ESTADO DE ASEO (Supabase) ────────────────────────────────────────────────
+// Tabla: aseo_estado { id, fecha (YYYY-MM-DD), completado (bool), persona_responsable, created_at }
+let _aseoCache={};
+
+async function getAseoEstado(fechaK){
+  if(_aseoCache[fechaK]!==undefined)return _aseoCache[fechaK];
+  const res=await sb('GET','aseo_estado','',`?fecha=eq.${fechaK}`);
+  const val=(res&&res.length>0)?res[0]:null;
+  _aseoCache[fechaK]=val;
+  return val;
+}
+
+async function marcarAseoCompletado(fechaK,persona){
+  _aseoCache[fechaK]=undefined; // invalidar cache
+  // Upsert: si ya existe actualizar, si no crear
+  const existing=await sb('GET','aseo_estado','',`?fecha=eq.${fechaK}`);
+  if(existing&&existing.length>0){
+    await sb('PATCH','aseo_estado',{completado:true,persona_responsable:persona},`?fecha=eq.${fechaK}`);
+  } else {
+    await sb('POST','aseo_estado',{fecha:fechaK,completado:true,persona_responsable:persona});
+  }
+  _aseoCache[fechaK]=undefined;
+}
+
+// Prefetch estado de días del mes para el calendario
+async function prefetchAseoMes(ano,mes){
+  const key=`${ano}-${String(mes+1).padStart(2,'0')}`;
+  const res=await sb('GET','aseo_estado','',`?fecha=like.${key}*`)||[];
+  res.forEach(r=>{_aseoCache[r.fecha]=r;});
+  return res;
+}
+
+// ── HOY ─────────────────────────────────────────────────────────────────────
+async function renderHoy(personas=[]){
+  const p=personaDia(hoy);
+  const c=C[p];
+  const esDom=hoy.getDay()===0;
+  const esBasura=BASURA_DIAS.includes(hoy.getDay());
+  const pr=esDom?prioridadDom(hoy):null;
+  const fk=fechaKey(hoy);
+
+  // Cumpleaños
+  const cumple=cumpleDelDia(hoy,personas);
+  document.getElementById('birthday-zone').innerHTML=cumple?`
+    <div class="birthday-banner">
+      <div style="font-size:28px;margin-bottom:6px;">🎂</div>
+      <div class="bname">¡Feliz cumpleaños, ${cumple.nombre}!</div>
+      <div class="bsub">De parte de toda la casa. ¡Que sea un gran día!</div>
+    </div>`:'';
+
+  // Quote
+  document.getElementById('quote-zone').innerHTML=`<div class="quote">"${QUOTES[hoy.getDay()]}"</div>`;
+
+  // Limpiar zona de selector (ya no se muestra al inicio)
+  document.getElementById('persona-sel-zone').innerHTML='';
+
+  // Estado de aseo del día
+  const estado=await getAseoEstado(fk);
+  const yaCompletado=estado&&estado.completado;
+
+  // Banner si ya está completado
+  if(yaCompletado){
+    const msgIdx=Math.abs(hoy.getDate())%MSGS_COMPLETADO.length;
+    const msg=MSGS_COMPLETADO[msgIdx].replace('@nombre',estado.persona_responsable||p);
+    document.getElementById('completado-zone').innerHTML=`
+      <div class="completado-banner">
+        <div class="cb-icon">✅</div>
+        <div class="cb-msg">${msg}</div>
+        <div class="cb-sub">Aseo completado hoy · ${estado.persona_responsable||p}</div>
+      </div>`;
+  } else {
+    document.getElementById('completado-zone').innerHTML='';
+  }
+
+  // Turno
+  document.getElementById('card-turno').innerHTML=`
+    <div class="sec">Turno de aseo hoy</div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="av" style="width:44px;height:44px;font-size:13px;background:${c.bg};color:${c.tx};border:1.5px solid ${c.tx}33;">${c.ini}</div>
+      <div style="flex:1;">
+        <div style="font-size:19px;font-weight:500;">${p}</div>
+        <div style="font-size:12px;color:var(--text2);">${esDom?'Domingo — aseo completo':'Aseo diario Lun–Sáb'}</div>
+      </div>
+      ${esDom?`<div style="text-align:center;"><div style="font-size:20px;">${PRIO_ICON[pr]}</div><div style="font-size:10px;color:var(--text2);">${pr}</div></div>`:''}
+    </div>`;
+
+  const tareasBase=['Cambiar bolsas de basura (si pasa el carro)','Barrer y trapear el baño','Barrer y trapear la cocina','Organizar las ollas','Limpiar el mesón','Lavar el porta platos'];
+  const tareasDom=['Barrer y trapear todo el piso','Barrer gradas y balcón','Barrer y trapear patio de ropas','Limpiar cocina completa','Limpiar baño completo','Atender prioridad: '+pr+' — '+PRIO_DESC[pr]];
+  const lista=esDom?tareasDom:tareasBase;
+
+  // Cargar estado de tareas desde Supabase para que todos lo vean
+  const tareasEstado=await sb('GET','tareas_estado','',`?fecha=eq.${fk}`)||[];
+  const tareasMap={};
+  tareasEstado.forEach(t=>{tareasMap[t.tarea_idx]=t.completada;});
+  const totalCompletadas=Object.values(tareasMap).filter(Boolean).length;
+  const todasListas=totalCompletadas>=lista.length&&lista.length>0;
+
+  document.getElementById('card-tareas').innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div class="sec" style="margin:0;">Tareas de hoy</div>
+      <span style="font-size:11px;color:var(--text2);">${totalCompletadas}/${lista.length}</span>
+    </div>
+    ${lista.map((t,i)=>`
+      <div class="row">
+        <span style="font-size:13px;line-height:1.4;flex:1;padding-right:10px;${tareasMap[i]?'color:var(--text3);text-decoration:line-through;':''}">${t}</span>
+        <button class="chk${tareasMap[i]?' on':''}" onclick="toggleTarea(${i},'${fk}')">${tareasMap[i]?'✓':''}</button>
+      </div>`).join('')}
+    ${todasListas&&!yaCompletado?`
+      <button class="btn primary" style="margin-top:14px;" onclick="mostrarSelectorConfirmacion('${fk}','${p}')">
+        ✅ Confirmar aseo completado
+      </button>`:''}
+  `;
+
+  document.getElementById('basura-zone').innerHTML=esBasura?
+    `<div class="info-box">🗑️ Hoy pasa el carro de basura. Recuerda sacar las bolsas en la noche.</div>`:'';
+}
+
+function setPersonaActiva(nombre){
+  personaActiva=nombre;
+  localStorage.setItem('persona_activa',nombre);
+}
+
+async function toggleTarea(i,fk){
+  // Leer estado actual de Supabase
+  const existing=await sb('GET','tareas_estado','',`?fecha=eq.${fk}&tarea_idx=eq.${i}`);
+  if(existing&&existing.length>0){
+    const actual=existing[0].completada;
+    await sb('PATCH','tareas_estado',{completada:!actual},`?fecha=eq.${fk}&tarea_idx=eq.${i}`);
+  } else {
+    await sb('POST','tareas_estado',{fecha:fk,tarea_idx:i,completada:true});
+  }
+  renderHoy(window._personas||[]);
+}
+
+function mostrarSelectorConfirmacion(fk,responsable){
+  // Insertar selector inline debajo del botón
+  const card=document.getElementById('card-tareas');
+  const existing=document.getElementById('selector-confirmacion');
+  if(existing){existing.remove();return;}
+  const div=document.createElement('div');
+  div.id='selector-confirmacion';
+  div.style.cssText='margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);';
+  div.innerHTML=`
+    <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">¿Quién confirma el aseo?</div>
+    <div class="persona-selector">
+      ${PERSONAS.map(np=>{
+        const nc=C[np];
+        return `<button class="ps-btn${np===responsable?' activo':''}" onclick="confirmarAseoCompleto('${fk}','${np}')">
+          <div class="ps-av" style="background:${nc.bg};color:${nc.tx};">${nc.ini}</div>
+          <span>${np}</span>
+        </button>`;
+      }).join('')}
+    </div>`;
+  card.appendChild(div);
+}
+
+async function confirmarAseoCompleto(fk,persona){
+  await marcarAseoCompletado(fk,persona);
+  toast('✅ ¡Aseo confirmado!');
+  _aseoCache={};
+  renderHoy(window._personas||[]);
+  renderCal();
+}
+
+// ── CALENDARIO ───────────────────────────────────────────────────────────────
+let calAno=hoy.getFullYear(),calMes=hoy.getMonth(),selDate=null;
+
+async function cambiarMes(d){
+  calMes+=d;
+  if(calMes>11){calMes=0;calAno++;}
+  if(calMes<0){calMes=11;calAno--;}
+  await renderCal();
+}
+
+async function renderCal(){
+  const personas=window._personas||[];
+  document.getElementById('cal-titulo').textContent=MESES_NOM[calMes]+' '+calAno;
+  await prefetchAseoMes(calAno,calMes);
+
+  const ayer=new Date(hoy);ayer.setDate(ayer.getDate()-1);
+  const ultimo=new Date(calAno,calMes+1,0);
+  let ini=new Date(calAno,calMes,1);
+  const dow=ini.getDay();
+  ini.setDate(ini.getDate()-(dow===0?6:dow-1));
+  let html='',curr=new Date(ini),count=0;
+
+  while(curr<=ultimo||count<35){
+    if(count>=42)break;
+    const d=new Date(curr);
+    const esMes=d.getMonth()===calMes;
+    const esHoy=isSameDay(d,hoy);
+    const esDom=d.getDay()===0;
+    const p=personaDia(d);
+    const c=C[p];
+    const pr=esDom?prioridadDom(d):null;
+    const esSel=selDate&&isSameDay(d,selDate);
+    const cumple=esMes?cumpleDelDia(d,personas):null;
+    const fk=fechaKey(d);
+    const estado=_aseoCache[fk];
+    const esCompletado=estado&&estado.completado;
+    const esPasado=d<ayer&&!esHoy;
+    const esIncumplido=esPasado&&esMes&&!esCompletado;
+
+    let aseoIndicador='';
+
+    html+=`<div class="cal-cell${!esMes?' otro':''}${esHoy?' hoy':''}${esSel?' sel':''}${cumple?' cumple':''}" onclick="selDia(${d.getFullYear()},${d.getMonth()},${d.getDate()})">
+      <div class="cn">${d.getDate()}</div>
+      <div class="cav" style="background:${c.bg};color:${c.tx};">${c.ini}</div>
+      ${esDom&&esMes?`<div class="cprio">${PRIO_ICON[pr]}</div>`:''}
+      ${cumple?`<div class="cbd">🎂${cumple.nombre.split(' ')[0]}</div>`:''}
+    </div>`;
+    curr.setDate(curr.getDate()+1);count++;
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+  renderCalDetalle();
+}
+
+function selDia(y,m,d){selDate=new Date(y,m,d);renderCal();}
+
+function renderCalDetalle(){
+  const el=document.getElementById('cal-detalle');
+  if(!selDate){el.innerHTML='';return;}
+  const p=personaDia(selDate);
+  const c=C[p];
+  const esDom=selDate.getDay()===0;
+  const pr=esDom?prioridadDom(selDate):null;
+  const cumple=cumpleDelDia(selDate,window._personas||[]);
+  const fk=fechaKey(selDate);
+  const estado=_aseoCache[fk];
+  const esCompletado=estado&&estado.completado;
+  el.innerHTML=`<div class="card accent">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="av" style="width:36px;height:36px;background:${c.bg};color:${c.tx};border:1px solid ${c.tx}33;">${c.ini}</div>
+      <div>
+        <div style="font-size:14px;font-weight:500;">${selDate.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'})}</div>
+        <div style="font-size:12px;color:var(--text2);">Le toca a <strong style="color:${c.tx}">${p}</strong> · ${esDom?'Aseo completo':'Aseo diario'}</div>
+      </div>
+      ${isSameDay(selDate,hoy)?`<span class="badge" style="margin-left:auto;background:var(--green);color:#fff;">Hoy</span>`:''}
+      ${esCompletado?`<span class="badge" style="margin-left:auto;background:rgba(29,158,117,.15);color:#1D9E75;">✓ Listo</span>`:''}
+    </div>
+    ${esDom?`<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);font-size:12px;color:var(--text2);">${PRIO_ICON[pr]} Prioridad: <strong style="color:var(--text)">${pr}</strong> — ${PRIO_DESC[pr]}</div>`:''}
+    ${cumple?`<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);font-size:12px;color:#EF9F27;">🎂 ¡Cumpleaños de <strong>${cumple.nombre}</strong>!</div>`:''}
+    ${esCompletado?`<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);font-size:12px;color:#1D9E75;">✅ Completado por <strong>${estado.persona_responsable}</strong></div>`:''}
+  </div>`;
+}
+
+// ── SEMANA ───────────────────────────────────────────────────────────────────
+let semBase=new Date(hoy);
+(function(){const d=semBase.getDay();semBase.setDate(semBase.getDate()-(d===0?6:d-1));})();
+
+async function cambiarSemana(d){semBase=new Date(semBase);semBase.setDate(semBase.getDate()+d*7);await renderSemana();}
+
+async function renderSemana(){
+  const fin=new Date(semBase);fin.setDate(fin.getDate()+6);
+  document.getElementById('sem-titulo').textContent=
+    semBase.toLocaleDateString('es-CO',{day:'numeric',month:'short'})+' – '+fin.toLocaleDateString('es-CO',{day:'numeric',month:'short'});
+  const conteo={};PERSONAS.forEach(p=>conteo[p]=0);
+
+  // Prefetch estados de la semana
+  const fks=[];
+  for(let i=0;i<7;i++){const d=new Date(semBase);d.setDate(d.getDate()+i);fks.push(fechaKey(d));}
+  const estadosSemana=await sb('GET','aseo_estado','',`?fecha=in.(${fks.join(',')})`)||[];
+  const estadoMap={};estadosSemana.forEach(e=>{estadoMap[e.fecha]=e;});
+
+  let rows='<tr><th>Día</th><th>Fecha</th><th>Persona</th><th>Estado</th></tr>';
+  for(let i=0;i<7;i++){
+    const d=new Date(semBase);d.setDate(d.getDate()+i);
+    const p=personaDia(d);conteo[p]++;
+    const c=C[p];
+    const esDom=d.getDay()===0;
+    // ← usa la misma función que el calendario
+    const pr=esDom?prioridadDom(d):null;
+    const esHoy=isSameDay(d,hoy);
+    const esBasura=BASURA_DIAS.includes(d.getDay());
+    const cumple=cumpleDelDia(d,window._personas||[]);
+    const fk=fechaKey(d);
+    const estado=estadoMap[fk];
+    const esCompletado=estado&&estado.completado;
+    const ayer=new Date(hoy);ayer.setDate(ayer.getDate()-1);
+    const esIncumplido=d<ayer&&!esHoy&&!esCompletado;
+    let estadoCell='';
+    if(esCompletado)estadoCell='<span style="color:#1D9E75;font-size:13px;">✓</span>';
+    else if(esIncumplido)estadoCell='<span style="color:#E24B4A;font-size:13px;">✕</span>';
+    if(esDom)estadoCell=(estadoCell?estadoCell+' ':'')+`<span style="font-size:12px;">${PRIO_ICON[pr]} ${pr}</span>`;
+    else if(esBasura)estadoCell=(estadoCell?estadoCell+' ':'')+'🗑️';
+    if(cumple)estadoCell+=' 🎂';
+
+    rows+=`<tr${esHoy?' class="hoy-row"':''}>
+      <td style="color:${esDom?'#E24B4A':'var(--text)'};font-weight:${esHoy?500:400};">${DIAS_NOM[i]}</td>
+      <td style="color:var(--text2);font-size:12px;">${d.getDate()}/${d.getMonth()+1}</td>
+      <td><div style="display:flex;align-items:center;gap:5px;">
+        <div class="av" style="width:20px;height:20px;font-size:8px;background:${c.bg};color:${c.tx};">${c.ini}</div>
+        <span>${p}</span>
+      </div></td>
+      <td>${estadoCell}</td>
+    </tr>`;
+  }
+  document.getElementById('sem-table').innerHTML=rows;
+  let stats='<div class="sec">Distribución esta semana</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">';
+  PERSONAS.forEach(p=>{
+    const c=C[p];
+    stats+=`<div style="text-align:center;padding:8px;border-radius:10px;background:${c.bg};">
+      <div style="font-size:18px;font-weight:500;color:${c.tx};">${conteo[p]}</div>
+      <div style="font-size:10px;color:${c.tx};margin-top:2px;">${c.ini}</div>
+    </div>`;
+  });
+  document.getElementById('sem-stats').innerHTML=stats+'</div>';
+}
+
+// ── IMPLEMENTOS (Supabase dinámico) ──────────────────────────────────────────
+// Tabla: implementos { id, item, persona_compra, fecha, created_at }
+// La rotación: por cada ítem, contar cuántas veces fue comprado → determina quién toca ahora
+
+function siguienteResponsable(item, historial){
+  // Filtrar historial del ítem, ordenado más reciente primero
+  const compras=historial.filter(h=>h.item===item).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  if(compras.length===0){
+    // Sin historial: empieza Tatiana
+    return IMPL_ORDEN[0];
+  }
+  // El último que compró → el siguiente en el orden
+  const ultimoComprador=compras[0].persona_compra;
+  const idx=IMPL_ORDEN.indexOf(ultimoComprador);
+  return IMPL_ORDEN[(idx+1)%4];
+}
+
+async function renderImpl(){
+  const hist=await sb('GET','implementos','','?order=created_at.desc&limit=40')||[];
+
+  let cicloHtml='<div class="card"><div class="sec">Ciclo actual — quién pone qué</div>';
+  IMPL_ITEMS.forEach(item=>{
+    const resp=siguienteResponsable(item,hist);
+    const c=C[resp];
+    const ultimaCompra=hist.filter(h=>h.item===item)[0];
+    cicloHtml+=`<div class="impl-item">
+      <div>
+        <div style="font-size:13px;font-weight:500;">${item}</div>
+        <div class="impl-resp">Responsable: <span style="color:${c.tx};font-weight:500;">${resp}</span></div>
+        ${ultimaCompra?`<div style="font-size:11px;color:var(--text3);margin-top:2px;">Última compra: ${ultimaCompra.persona_compra} · ${ultimaCompra.created_at?new Date(ultimaCompra.created_at).toLocaleDateString('es-CO',{day:'numeric',month:'short'}):ultimaCompra.fecha}</div>`:''}
+      </div>
+      <button onclick="registrarImplRapido('${item}','${resp}')" style="font-size:12px;padding:6px 12px;border-radius:10px;border:0.5px solid var(--accent);background:var(--accent-soft);color:var(--accent);cursor:pointer;white-space:nowrap;flex-shrink:0;">+ Registrar</button>
+    </div>`;
+  });
+  cicloHtml+='</div>';
+  document.getElementById('impl-ciclo').innerHTML=cicloHtml;
+
+  let histHtml='<div class="sec">Historial de compras</div>';
+  if(!hist||hist.length===0){
+    histHtml+='<div style="font-size:13px;color:var(--text2);">Sin registros aún.</div>';
+  } else {
+    histHtml+=hist.slice(0,20).map(r=>{
+      const c=C[r.persona_compra]||{bg:'#fff1',tx:'#888',ini:'?'};
+      const fecha=r.created_at?new Date(r.created_at).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}):(r.fecha||'');
+      return `<div class="row"><div style="display:flex;align-items:center;gap:8px;">
+        <div class="av" style="width:28px;height:28px;background:${c.bg};color:${c.tx};border:1px solid ${c.tx}33;">${c.ini}</div>
+        <div><div style="font-size:13px;font-weight:500;">${r.persona_compra}</div>
+          <div style="font-size:11px;color:var(--text2);">${r.item} · ${fecha}</div></div>
+      </div></div>`;
+    }).join('');
+  }
+  document.getElementById('impl-hist').innerHTML=histHtml;
+}
+
+async function registrarImplRapido(item, persona){
+  const fecha=hoy.toLocaleDateString('es-CO',{day:'numeric',month:'short'});
+  await sb('POST','implementos',{item,persona_compra:persona,fecha});
+  toast(`✓ ${item} registrado por ${persona}`);
+  renderImpl();
+}
+
+// ── MULTAS ───────────────────────────────────────────────────────────────────
+async function renderMultas(){
+  const multas=await sb('GET','multas','','?order=created_at.desc')||[];
+  const total=multas.reduce((s,m)=>s+m.valor,0);
+  document.getElementById('m-total').textContent='$'+total.toLocaleString('es-CO');
+  document.getElementById('m-count').textContent=multas.length;
+  const deudas={};PERSONAS.forEach(p=>deudas[p]=0);
+  multas.forEach(m=>deudas[m.persona]=(deudas[m.persona]||0)+m.valor);
+  const maxD=Math.max(...Object.values(deudas),1);
+  let dHtml='<div class="sec">Deuda por persona</div>';
+  PERSONAS.forEach(p=>{
+    const c=C[p];
+    dHtml+=`<div class="row">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;">
+        <div class="av" style="width:30px;height:30px;background:${c.bg};color:${c.tx};border:1px solid ${c.tx}33;">${c.ini}</div>
+        <div style="flex:1;"><div style="font-size:13px;">${p}</div>
+          <div class="prog"><div class="prog-fill" style="width:${Math.round((deudas[p]||0)/maxD*100)}%;"></div></div></div>
+      </div>
+      <span style="font-size:13px;font-weight:500;color:${(deudas[p]||0)>0?'#E24B4A':'var(--text3)'};margin-left:10px;">${(deudas[p]||0)>0?'$'+(deudas[p]).toLocaleString('es-CO'):'$0'}</span>
+    </div>`;
+  });
+  document.getElementById('deuda-card').innerHTML=dHtml;
+  let hHtml='<div class="sec">Historial</div>';
+  if(!multas||multas.length===0){
+    hHtml+='<div style="font-size:13px;color:var(--text2);">Sin multas registradas.</div>';
+  } else {
+    hHtml+=multas.slice(0,20).map(m=>{
+      const c=C[m.persona]||{bg:'#fff1',tx:'#888',ini:'?'};
+      return `<div class="row" style="align-items:flex-start;">
+        <div style="display:flex;align-items:center;gap:8px;flex:1;">
+          <div class="av" style="width:28px;height:28px;background:${c.bg};color:${c.tx};border:1px solid ${c.tx}33;flex-shrink:0;">${c.ini}</div>
+          <div><div style="font-size:13px;font-weight:500;">${m.persona}</div>
+            <div style="font-size:11px;color:var(--text2);">${m.tipo||''}${m.motivo?' · '+m.motivo:''} · ${m.fecha||''}</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span style="font-size:13px;font-weight:500;color:#E24B4A;">$${(m.valor||0).toLocaleString('es-CO')}</span>
+          <button onclick="cancelarMulta('${m.id}')" title="Cancelar multa" style="width:22px;height:22px;border-radius:50%;border:0.5px solid var(--border2);background:rgba(226,75,74,.1);color:#E24B4A;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">×</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('multas-hist').innerHTML=hHtml;
+}
+
+async function registrarMulta(){
+  const p=document.getElementById('multa-p').value;
+  const v=parseInt(document.getElementById('multa-t').value);
+  const m=document.getElementById('multa-m').value.trim();
+  const tipo=v===2000?'Domingo':'Día normal';
+  const fecha=hoy.toLocaleDateString('es-CO',{day:'numeric',month:'short'});
+  await sb('POST','multas',{persona:p,valor:v,tipo,motivo:m,fecha});
+  document.getElementById('multa-m').value='';
+  toast('Multa registrada');
+  renderMultas();
+}
+
+async function cancelarMulta(id){
+  if(!confirm('¿Cancelar esta multa?'))return;
+  await sb('DELETE','multas','',`?id=eq.${id}`);
+  toast('Multa cancelada','#555');
+  renderMultas();
+}
+
+// ── BUZÓN ────────────────────────────────────────────────────────────────────
+async function renderBuzon(){
+  const msgs=await sb('GET','comentarios','','?order=created_at.desc&limit=30')||[];
+  let html='';
+  if(!msgs||msgs.length===0){
+    html='<div style="font-size:13px;color:var(--text2);text-align:center;padding:20px 0;">Aún no hay mensajes. ¡Sé el primero!</div>';
+  } else {
+    html=msgs.map(m=>{
+      const c=C[m.persona]||{bg:'#fff1',tx:'#888',ini:'?'};
+      const fecha=m.created_at?new Date(m.created_at).toLocaleDateString('es-CO',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+      return `<div class="buz-msg">
+        <div class="buz-autor">
+          <div class="av" style="width:18px;height:18px;font-size:8px;background:${c.bg};color:${c.tx};border:1px solid ${c.tx}33;">${c.ini}</div>
+          <span style="color:${c.tx};font-weight:500;">${m.persona}</span>
+        </div>
+        <div class="buz-texto">${m.mensaje}</div>
+        <div class="buz-fecha">${fecha}</div>
+        <button class="buz-del" onclick="eliminarMensaje('${m.id}')">×</button>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('buzon-lista').innerHTML=html;
+}
+
+async function enviarBuzon(){
+  const p=document.getElementById('buz-p').value;
+  const txt=document.getElementById('buz-texto').value.trim();
+  if(!txt){toast('Escribe un mensaje primero');return;}
+  await sb('POST','comentarios',{persona:p,mensaje:txt});
+  document.getElementById('buz-texto').value='';
+  toast('✓ Mensaje publicado');
+  renderBuzon();
+}
+
+async function eliminarMensaje(id){
+  await sb('DELETE','comentarios','',`?id=eq.${id}`);
+  toast('Mensaje eliminado');
+  renderBuzon();
+}
+
+// ── PERSONAS ─────────────────────────────────────────────────────────────────
+async function renderPersonas(){
+  const personas=await sb('GET','personas','','?order=nombre')||[];
+  window._personas=personas;
+  let html='';
+  personas.forEach(per=>{
+    const c=C[per.nombre]||{bg:'#fff1',tx:'#888',ini:'?'};
+    html+=`<div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div class="av" style="width:44px;height:44px;font-size:14px;background:${c.bg};color:${c.tx};border:1.5px solid ${c.tx}33;">${c.ini}</div>
+        <div style="font-size:17px;font-weight:500;">${per.nombre}</div>
+      </div>
+      <div class="field">
+        <label>Fecha de cumpleaños</label>
+        <input type="date" id="bd-${per.id}" value="${per.cumpleanos||''}" onchange="guardarCumple('${per.id}',this.value)">
+      </div>
+      ${per.cumpleanos?`<div style="font-size:12px;color:#EF9F27;margin-top:4px;">🎂 ${new Date(per.cumpleanos+'T12:00:00').toLocaleDateString('es-CO',{day:'numeric',month:'long'})}</div>`:''}
+    </div>`;
+  });
+  document.getElementById('personas-list').innerHTML=html||'<div style="color:var(--text2);font-size:13px;">Cargando...</div>';
+}
+
+async function guardarCumple(id,val){
+  await sb('PATCH','personas',{cumpleanos:val},`?id=eq.${id}`);
+  toast('🎂 Cumpleaños guardado');
+  const personas=await sb('GET','personas','','?order=nombre')||[];
+  window._personas=personas;
+  renderHoy(personas);
+  renderCal();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+async function init(){
+  const personas=await sb('GET','personas','','?order=nombre')||[];
+  window._personas=personas;
+  await renderHoy(personas);
+  await renderCal();
+  renderSemana();
+}
+
+init();
+
+// Tab lazy loading
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    const match=t.getAttribute('onclick').match(/'(\w+)'/);
+    if(!match)return;
+    const id=match[1];
+    if(id==='implementos')renderImpl();
+    if(id==='multas')renderMultas();
+    if(id==='buzon')renderBuzon();
+    if(id==='perfil')renderPersonas();
+    if(id==='semana')renderSemana();
+    if(id==='calendario')renderCal();
+  });
+});
+
+// PWA
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
